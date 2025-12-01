@@ -1,8 +1,10 @@
 from datetime import datetime, timedelta
 from jose import jwt # type: ignore
 from passlib.context import CryptContext #type: ignore
+import secrets
 
 from app.core.config import settings #type: ignore
+
 
 
 # -----------------------------
@@ -39,3 +41,10 @@ def create_access_token(data: dict) -> str:
     )
 
     return encoded_jwt
+
+def generate_password_reset_token() -> str:
+    return secrets.token_urlsafe(32)
+
+def token_expiry(minutes: int = 15):
+    return datetime.utcnow() + timedelta(minutes=minutes)
+    

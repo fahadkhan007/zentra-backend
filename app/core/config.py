@@ -23,4 +23,9 @@ class Settings(BaseSettings):
         env_file_encoding = "utf-8"
 
 
+    #redis
+    REDIS_HOST: str="localhost"
+    REDIS_PORT: int=6379
+
+
 settings = Settings() #type: ignore

@@ -46,7 +46,17 @@ async def create_profile(
     # Compute BMI
     bmi_value = calculate_bmi(data.weight_kg, data.height_m)
 
-    profile = models.UserHealthProfile(
+    # Create basic user profile
+    basic_profile = models.UserProfile(
+        user_id=current_user.id,
+        gender=data.gender,
+        height_m=data.height_m,
+        weight_kg=data.weight_kg,
+        bmi=bmi_value
+    )
+
+    # Create detailed health profile
+    health_profile = models.UserHealthProfile(
         user_id=current_user.id,
         gender=data.gender,
         age=data.age,
@@ -68,11 +78,12 @@ async def create_profile(
         travel_mode=data.travel_mode
     )
 
-    db.add(profile)
+    db.add(basic_profile)
+    db.add(health_profile)
     await db.commit()
-    await db.refresh(profile)
+    await db.refresh(health_profile)
 
-    return profile
+    return health_profile
 
 
 # -----------------------------
@@ -90,25 +101,42 @@ async def update_profile(
             models.UserHealthProfile.user_id == current_user.id
         )
     )
-    profile = result.scalar_one_or_none()
+    health_profile = result.scalar_one_or_none()
 
-    if not profile:
+    if not health_profile:
         raise HTTPException(status_code=404, detail="Profile not found")
+
+    # Get basic profile
+    basic_result = await db.execute(
+        select(models.UserProfile).filter(
+            models.UserProfile.user_id == current_user.id
+        )
+    )
+    basic_profile = basic_result.scalar_one_or_none()
 
     # Update only the fields provided by user
     update_data = data.dict(exclude_unset=True)
 
+    # Fields that exist in both tables
+    basic_fields = {"gender", "height_m", "weight_kg", "bmi"}
+
     for field, value in update_data.items():
-        setattr(profile, field, value)
+        setattr(health_profile, field, value)
+        # Also update basic profile if field exists there
+        if basic_profile and field in basic_fields:
+            setattr(basic_profile, field, value)
 
     # Recalculate BMI if height or weight changed
     if "weight_kg" in update_data or "height_m" in update_data:
-        profile.bmi = calculate_bmi(profile.weight_kg, profile.height_m)
+        new_bmi = calculate_bmi(health_profile.weight_kg, health_profile.height_m)
+        health_profile.bmi = new_bmi
+        if basic_profile:
+            basic_profile.bmi = new_bmi
 
     await db.commit()
-    await db.refresh(profile)
+    await db.refresh(health_profile)
 
-    return profile
+    return health_profile
 
 
 # -----------------------------

@@ -46,10 +46,10 @@ google-generativeai==0.8.6  # FREE Gemini embeddings
 openai==1.12.0  # Optional: for LLM chat responses
 
 # Document Processing
-langchain==0.1.9
-langchain-community==0.4.1
-langchain-classic==1.0.1
-langchain-text-splitters==1.1.0
+langchain
+langchain-core
+langchain-community
+langchain-text-splitters
 
 # RAG Utilities
 tiktoken==0.12.0

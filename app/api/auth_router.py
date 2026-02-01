@@ -11,7 +11,7 @@ from app.core.dependencies import get_current_user, oauth2_scheme
 from app.db import models #type: ignore
 from app.core.security import generate_password_reset_token, token_expiry, blacklist_token
 from app.core.hashing import Hash
-from app.core.email_utils import send_password_reset_email
+
 
 
 router = APIRouter(prefix="/auth", tags=["Auth"])
@@ -67,9 +67,7 @@ async def request_password_reset(data: PasswordResetRequest, db: AsyncSession = 
         "reset token": token
     }
     
-    #send_password_reset_email(user.email, token)
-    #return {"message": "Password reset email sent"}
-    # For demonstration, we skip actual email sending
+   
     
     
     

@@ -3,6 +3,7 @@ from uuid import UUID
 
 class UserCreate(BaseModel):
     email: EmailStr
+    name: str
     password: str
     
     
@@ -15,6 +16,7 @@ class UserLogin(BaseModel):
 class UserResponse(BaseModel):
     id: UUID
     email: EmailStr
+    name: str
 
     class Config:
         from_attribute = True

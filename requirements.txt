@@ -22,6 +22,9 @@ pydantic==2.10.5
 pydantic-settings==2.7.1
 email-validator==2.1.0
 
+# Email
+fastapi-mail==1.6.1
+
 # Machine Learning (for model inference)
 numpy==1.26.4
 pandas==2.2.3

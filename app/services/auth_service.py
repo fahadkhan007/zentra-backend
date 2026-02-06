@@ -29,6 +29,7 @@ async def create_user(db: AsyncSession, user_data: UserCreate):
     # create user object
     new_user = models.User(
         email=user_data.email,
+        name=user_data.name,
         hashed_password=hashed_pw,
     )
 

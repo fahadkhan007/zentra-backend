@@ -22,20 +22,6 @@ Zentra is a high-performance intelligent backend providing secure authentication
 user profile management, and advanced prediction capabilities with generative ai assistant for heath and wellness.
 """
 
-tags_metadata = [
-    {
-        "name": "Auth",
-        "description": "Authentication endpoints",
-    },
-    {
-        "name": "Profile",
-        "description": "User profile endpoints",
-    },
-    {
-        "name": "Prediction",
-        "description": "Prediction endpoints",
-    },
-]
 
 app = FastAPI(
     lifespan=lifespan,
@@ -44,7 +30,6 @@ app = FastAPI(
     version="1.0.0",
     docs_url=None,
     redoc_url=None,
-    openapi_tags=tags_metadata,
     generate_unique_id_function=lambda route: route.name,
     )
 

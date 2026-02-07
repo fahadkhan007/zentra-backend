@@ -19,7 +19,7 @@ bcrypt==4.0.1
 
 # Data Validation
 pydantic==2.10.5
-pydantic-settings>=2.10.1
+pydantic-settings==2.7.1
 email-validator>=2.3.0
 
 # Email
@@ -48,10 +48,10 @@ google-generativeai==0.8.6  # FREE Gemini embeddings
 openai==1.12.0  # Optional: for LLM chat responses
 
 # Document Processing
-langchain==1.2.7
-langchain-core==1.2.7
-langchain-community==0.4.1
-langchain-text-splitters==1.1.0
+langchain
+langchain-core
+langchain-community
+langchain-text-splitters
 
 # RAG Utilities
 tiktoken==0.12.0

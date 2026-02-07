@@ -31,6 +31,24 @@ services:
           type: redis
           property: connectionString
       
+      - key: REDIS_HOST
+        fromService:
+          name: zentra-redis
+          type: redis
+          property: host
+      
+      - key: REDIS_PORT
+        fromService:
+          name: zentra-redis
+          type: redis
+          property: port
+      
+      - key: REDIS_PASSWORD
+        fromService:
+          name: zentra-redis
+          type: redis
+          property: password
+      
       - key: SECRET_KEY
         generateValue: true
       

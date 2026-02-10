@@ -1,0 +1,62 @@
+# Web Framework
+fastapi[standard]==0.115.0
+uvicorn[standard]==0.27.0
+scalar-fastapi==1.0.3
+
+# Database
+sqlalchemy[asyncio]==2.0.36
+# Using psycopg3 (has Python 3.13 wheels)
+psycopg[binary]==3.2.3
+# asyncpg==0.30.0  # Temporarily disabled - needs C++ compiler on Windows with Python 3.13
+alembic==1.13.1
+redis[hiredis]==5.0.1
+
+# Authentication & Security
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.12
+bcrypt==4.0.1
+
+# Data Validation
+pydantic==2.10.5
+pydantic-settings==2.7.1
+email-validator>=2.3.0
+
+# Email
+fastapi-mail==1.4.1
+# Machine Learning (for model inference)
+numpy==1.26.4
+pandas==2.2.3
+scikit-learn==1.6.1
+joblib==1.3.2
+
+# Utilities
+python-dotenv==1.0.0
+ipython==8.20.0
+requests>=2.31.0  # Compatible with both resend and langchain
+
+# RAG System Dependencies
+# PDF Processing
+PyPDF2==3.0.1
+pypdf==6.6.2
+
+# Vector Database
+chromadb==0.4.24
+
+# Embeddings & LLM (API-based, no local models)
+google-generativeai==0.8.6  # FREE Gemini embeddings
+openai==1.12.0  # Optional: for LLM chat responses
+
+# Document Processing
+langchain
+langchain-core
+langchain-community
+langchain-text-splitters
+
+# RAG Utilities
+tiktoken==0.12.0
+tenacity==9.1.2
+
+# Optional: Google Gemini (uncomment if using Gemini instead of OpenAI)
+# google-generativeai==0.3.2
+

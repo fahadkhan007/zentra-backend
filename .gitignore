@@ -17,3 +17,8 @@ env/
 # Model files
 *.pkl
 *.joblib
+
+# Vector Database (ChromaDB) - Binary files, don't push to GitHub
+data/chroma_db/
+*.sqlite3
+*.sqlite

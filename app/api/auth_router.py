@@ -10,8 +10,6 @@ from app.schemas.auth import (
     PasswordResetRequest,
     Token,
     UserCreate,
-    UserLogin,
-    UserResponse,
 )  # type: ignore
 from app.services.auth_service import create_user, authenticate_user
 from app.core.dependencies import get_current_user, oauth2_scheme
@@ -25,14 +23,13 @@ from app.core.hashing import Hash
 from app.services.email_service import send_password_reset_email
 
 
-
 router = APIRouter(prefix="/auth", tags=["Auth"])
 
 
-@router.post("/signup", response_model=UserResponse)
+@router.post("/signup", response_model=Token)
 async def signup(user_data: UserCreate, db: AsyncSession = Depends(get_db)):  # type: ignore
-    new_user = await create_user(db, user_data)  # type: ignore
-    return new_user  # type: ignore
+    token = await create_user(db, user_data)  # type: ignore
+    return token  # type: ignore
 
 
 @router.post("/login", response_model=Token)
@@ -47,6 +44,7 @@ async def login(
 async def logout(token: str = Depends(oauth2_scheme)):
     await blacklist_token(token)
     return {"message": "Logged out successfully"}
+
 
 @router.post("/request-password-reset")
 async def request_password_reset(
@@ -122,4 +120,3 @@ async def reset_password(
 @router.get("/me")
 async def read_current_user(current_user: models.User = Depends(get_current_user)):
     return {"id": current_user.id, "email": current_user.email}
-

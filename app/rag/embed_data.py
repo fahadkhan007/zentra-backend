@@ -5,7 +5,7 @@ Uses the officially supported 'models/embedding-001' model
 import json
 from pathlib import Path
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
-from langchain_community.vectorstores import Chroma
+
 from langchain_core.documents import Document
 from app.core.config import settings
 
@@ -119,7 +119,7 @@ def embed_and_store():
             )
             print("   ✅ Created new collection: fitness_knowledge")
             start_index = 0
-    except:
+    except:  # noqa: E722
         # Collection doesn't exist, create new one
         collection = chroma_client.create_collection(
             name="fitness_knowledge",
@@ -173,11 +173,11 @@ def embed_and_store():
                 cleaned_metadatas.append(cleaned)
             
             # Embed the batch
-            print(f"   🔄 Embedding...")
+            print("   🔄 Embedding...")
             batch_embeddings = embeddings.embed_documents(texts)
             
             # Add to ChromaDB
-            print(f"   💾 Storing in ChromaDB...")
+            print("   💾 Storing in ChromaDB...")
             collection.add(
                 embeddings=batch_embeddings,
                 documents=texts,
@@ -189,12 +189,12 @@ def embed_and_store():
             
             # Rate limiting: Wait 30 seconds between batches (except last one)
             if batch_num < total_batches:
-                print(f"   ⏳ Waiting 30 seconds (rate limit)...\n")
+                print("   ⏳ Waiting 30 seconds (rate limit)...\n")
                 time.sleep(30)
         
         except Exception as e:
             print(f"   ❌ Error in batch {batch_num}: {e}")
-            print(f"   Retrying in 60 seconds...")
+            print("   Retrying in 60 seconds...")
             time.sleep(60)
             
             # Retry once
@@ -220,10 +220,10 @@ def embed_and_store():
     print("\n" + "=" * 60)
     print("✅ EMBEDDING COMPLETE!")
     print("=" * 60)
-    print(f"📍 Location: ./data/chroma_db")
+    print("📍 Location: ./data/chroma_db")
     print(f"📊 Documents: {count}")
-    print(f"🔧 Model: gemini-embedding-001 (Gemini)")
-    print(f"🎯 Framework: LangChain")
+    print("🔧 Model: gemini-embedding-001 (Gemini)")
+    print("🎯 Framework: LangChain")
     print("\n💡 You can now use the RAG system in your FastAPI app!")
 
 

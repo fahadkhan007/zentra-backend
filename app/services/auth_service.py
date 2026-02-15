@@ -2,9 +2,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from fastapi import HTTPException, status
 
-from app.db import models #type: ignore
-from app.schemas.auth import UserCreate, UserLogin #type: ignore
-from app.core.security import hash_password, verify_password, create_access_token #type: ignore
+from app.db import models  # type: ignore
+from app.schemas.auth import UserCreate  # type: ignore
+from app.core.security import hash_password, verify_password, create_access_token  # type: ignore
 
 
 # -------------------------------------
@@ -16,7 +16,7 @@ async def create_user(db: AsyncSession, user_data: UserCreate):
         select(models.User).filter(models.User.email == user_data.email)
     )
     existing = result.scalar_one_or_none()
-    
+
     if existing:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -38,7 +38,10 @@ async def create_user(db: AsyncSession, user_data: UserCreate):
     await db.commit()
     await db.refresh(new_user)
 
-    return new_user
+    # create JWT token for immediate authentication
+    token = create_access_token({"sub": new_user.email})
+
+    return {"access_token": token, "token_type": "bearer"}
 
 
 # -------------------------------------
@@ -46,11 +49,9 @@ async def create_user(db: AsyncSession, user_data: UserCreate):
 # -------------------------------------
 async def authenticate_user(db: AsyncSession, user_data):
     # find user - username field contains the email for OAuth2PasswordRequestForm
-    email = user_data.username if hasattr(user_data, 'username') else user_data.email
-    
-    result = await db.execute(
-        select(models.User).filter(models.User.email == email)
-    )
+    email = user_data.username if hasattr(user_data, "username") else user_data.email
+
+    result = await db.execute(select(models.User).filter(models.User.email == email))
     user = result.scalar_one_or_none()
 
     if not user:
@@ -60,7 +61,7 @@ async def authenticate_user(db: AsyncSession, user_data):
         )
 
     # verify password
-    if not verify_password(user_data.password, user.hashed_password): #type: ignore
+    if not verify_password(user_data.password, user.hashed_password):  # type: ignore
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Invalid email or password",
@@ -70,4 +71,3 @@ async def authenticate_user(db: AsyncSession, user_data):
     token = create_access_token({"sub": user.email})
 
     return {"access_token": token, "token_type": "bearer"}
-

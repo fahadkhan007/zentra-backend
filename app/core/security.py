@@ -1,17 +1,13 @@
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from jose import jwt # type: ignore
 from passlib.context import CryptContext #type: ignore
 import secrets
 
 from app.core.redis import redis_client
 from app.core.config import settings #type: ignore
-from app.core.redis import redis_client
 
 
 
-# -----------------------------
-# 1) Password Hashing (bcrypt)
-# -----------------------------
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
@@ -23,9 +19,7 @@ def verify_password(plain_password: str, hashed_password: str) -> bool:
     return pwd_context.verify(plain_password, hashed_password)
 
 
-# -----------------------------
-# 2) JWT Token Creation
-# -----------------------------
+
 def create_access_token(data: dict) -> str:
     
     to_encode = data.copy()
@@ -51,9 +45,7 @@ def token_expiry(minutes: int = 15):
     return datetime.utcnow() + timedelta(minutes=minutes)
 
 
-# -----------------------------
-# 3) Token Blacklisting (ASYNC)
-# -----------------------------
+
 async def blacklist_token(token: str):
     payload = jwt.decode(
         token,

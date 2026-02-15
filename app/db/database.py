@@ -7,14 +7,14 @@ DATABASE_URL = str(settings.DATABASE_URL).replace(
     "postgresql://", "postgresql+psycopg://"
 )
 
-# 1) Create async engine
+
 engine = create_async_engine(
     DATABASE_URL,
     echo=True,
     future=True
 )
 
-# 2) Async session maker
+
 AsyncSessionLocal = async_sessionmaker(
     engine,
     class_=AsyncSession,
@@ -23,10 +23,10 @@ AsyncSessionLocal = async_sessionmaker(
     autoflush=False
 )
 
-# 3) Base class for all SQLAlchemy models
+
 Base = declarative_base()
 
-# 4) Async dependency: gives a database session to routes
+
 async def get_db():
     async with AsyncSessionLocal() as session:
         try:

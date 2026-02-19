@@ -54,6 +54,7 @@ langchain-core
 langchain-community
 langchain-text-splitters
 langgraph-checkpoint-redis
+langchain-google-genai
 langchain-chroma==1.1.0
 # RAG Utilities
 tiktoken==0.12.0

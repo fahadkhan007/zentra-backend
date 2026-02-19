@@ -12,7 +12,6 @@ from app.db.database import Base, engine  # type: ignore
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Create database tables on startup"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 

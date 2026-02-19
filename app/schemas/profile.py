@@ -106,4 +106,4 @@ class ProfileResponse(BaseModel):
     travel_mode: str
 
     class Config:
-        orm_mode = True
+        from_attributes = True

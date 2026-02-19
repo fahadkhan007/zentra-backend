@@ -3,21 +3,27 @@ from fastapi import FastAPI
 from scalar_fastapi.scalar_fastapi import get_scalar_api_reference
 from contextlib import asynccontextmanager
 
-from app.api.auth_router import router as auth_router #type: ignore
-from app.api.prediction_router import router as prediction_router #type: ignore
-from app.api.profile_router import router as profile_router #type: ignore
-from app.db.database import Base, engine #type: ignore
+from app.api.auth_router import router as auth_router  # type: ignore
+from app.api.prediction_router import router as prediction_router  # type: ignore
+from app.api.profile_router import router as profile_router  # type: ignore
+from app.api.chat_router import router as chat_router  # type: ignore
+from app.db.database import Base, engine  # type: ignore
+
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Create database tables on startup"""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+
+    import app.rag.vector_store
+    import app.rag.rag_chain
+
     yield
-    # Cleanup on shutdown
     await engine.dispose()
 
-description="""
+
+description = """
 Zentra is a high-performance intelligent backend providing secure authentication, 
 user profile management, and advanced prediction capabilities with generative ai assistant for heath and wellness.
 """
@@ -31,12 +37,12 @@ app = FastAPI(
     docs_url=None,
     redoc_url=None,
     generate_unique_id_function=lambda route: route.name,
-    )
+)
 
 app.include_router(auth_router)
 app.include_router(profile_router)
 app.include_router(prediction_router)
-
+app.include_router(chat_router)
 
 
 @app.get("/", include_in_schema=False)
@@ -87,12 +93,6 @@ def root():
     """)
 
 
-
-@app.get("/scalar",include_in_schema=False)
+@app.get("/scalar", include_in_schema=False)
 def get_scalar_api():
-    return get_scalar_api_reference(
-        openapi_url=app.openapi_url,
-        title="scalar docs"
-    )
-
-
+    return get_scalar_api_reference(openapi_url=app.openapi_url, title="scalar docs")

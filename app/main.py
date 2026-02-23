@@ -1,5 +1,6 @@
 from starlette.responses import HTMLResponse
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from scalar_fastapi.scalar_fastapi import get_scalar_api_reference
 from contextlib import asynccontextmanager
 
@@ -36,6 +37,20 @@ app = FastAPI(
     docs_url=None,
     redoc_url=None,
     generate_unique_id_function=lambda route: route.name,
+)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "http://localhost:5173",  # Vite dev server
+        "http://localhost:3000",  # alt dev port
+        "https://zentra-ai.up.railway.app",  # Railway backend self
+        # Add your frontend's deployed URL here when ready, e.g.:
+        # "https://zentra-frontend.vercel.app",
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(auth_router)

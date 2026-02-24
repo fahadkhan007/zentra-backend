@@ -42,11 +42,10 @@ app = FastAPI(
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:5173",  # Vite dev server
-        "http://localhost:3000",  # alt dev port
-        "https://zentra-ai.up.railway.app",  # Railway backend self
-        # Add your frontend's deployed URL here when ready, e.g.:
-        # "https://zentra-frontend.vercel.app",
+        "http://localhost:5173",  
+        "http://localhost:3000", 
+        "https://zentra-ai.up.railway.app", 
+        "https://zentra-ai-app.vercel.app",
     ],
     allow_credentials=True,
     allow_methods=["*"],

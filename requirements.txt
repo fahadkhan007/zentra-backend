@@ -26,7 +26,8 @@ email-validator>=2.3.0
 # Email
 fastapi-mail==1.4.1
 # Machine Learning (for model inference)
-numpy==1.26.4
+# numpy==1.26.4
+numpy==2.2.4
 pandas==2.2.3
 scikit-learn==1.6.1
 joblib==1.3.2

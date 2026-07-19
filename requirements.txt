@@ -54,6 +54,7 @@ langchain
 langchain-core
 langchain-community
 langchain-text-splitters
+langgraph
 langgraph-checkpoint-redis
 langchain-google-genai
 langchain-chroma==1.1.0

@@ -14,8 +14,8 @@ services:
     name: zentra-backend
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python app/ml/download_models.py && uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    buildCommand: pip install uv && uv sync && python app/ml/download_models.py && python app/rag/download_chroma.py
+    startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: "3.12"
@@ -92,6 +92,9 @@ services:
       # API Keys - YOU MUST UPDATE THESE
       - key: GEMINI_API_KEY
         sync: false  # Set manually in Render dashboard
+
+      - key: CHROMA_DOWNLOAD_URL
+        sync: false  # Set to your GitHub Release zip URL
       
       - key: OPENAI_API_KEY
         sync: false  # Set manually in Render dashboard

@@ -19,7 +19,7 @@ class UserResponse(BaseModel):
     name: str
 
     class Config:
-        from_attribute = True
+        from_attributes = True
 
 
 class Token(BaseModel):

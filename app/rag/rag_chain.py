@@ -1,5 +1,15 @@
 import logging
-from langchain.agents import create_agent
+
+# Configure a named logger so RAG activity always shows in the terminal
+logger = logging.getLogger("zentra.rag")
+logger.setLevel(logging.INFO)
+if not logger.handlers:
+    _handler = logging.StreamHandler()
+    _handler.setFormatter(
+        logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s", datefmt="%H:%M:%S")
+    )
+    logger.addHandler(_handler)
+from langgraph.prebuilt import create_react_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.tools import create_retriever_tool
 from langchain_core.messages import AIMessage, HumanMessage
@@ -24,9 +34,10 @@ IMPORTANT: You MUST always use the fitness_knowledge tool to search the knowledg
 
 Only skip the tool if the question is completely unrelated to health or fitness."""
 
-agent = create_agent(
-    llm,
+agent = create_react_agent(
+    model=llm,
     tools=[retriever_tool],
+    prompt=AGENT_SYSTEM_PROMPT,
 )
 
 print("✅ RAG agent initialized")
@@ -82,16 +93,34 @@ Use this information to provide personalized fitness and nutrition advice. Don't
     # Add current user message
     messages.append(HumanMessage(content=message))
 
-    # Invoke agent (stateless)
+    # ── RAG invocation ───────────────────────────────────────────────────────
+    logger.info("⏳ [RAG] Invoking agent for session: %s | query: %.80s", session_id, message)
+
     result = await agent.ainvoke({"messages": messages})
 
-    # Log which tools were used for observability
+    # ── Inspect which tools were called and what was retrieved ────────────────
     from langchain_core.messages import ToolMessage
 
-    tools_used = [m.name for m in result["messages"] if isinstance(m, ToolMessage)]
-    if tools_used:
-        logging.info(f"🔍 RAG tools used: {tools_used}")
+    tool_messages = [m for m in result["messages"] if isinstance(m, ToolMessage)]
+    tools_called  = [m.name for m in tool_messages]
+
+    if tool_messages:
+        logger.info("✅ [RAG] Vector DB WAS queried — tools called: %s", tools_called)
+        for tm in tool_messages:
+            # Each ToolMessage content is the raw retrieved docs as a string
+            doc_snippets = tm.content if isinstance(tm.content, str) else str(tm.content)
+            num_chars = len(doc_snippets)
+            logger.info(
+                "📄 [RAG] Retrieved %d chars of context from '%s'",
+                num_chars,
+                tm.name,
+            )
+            # Print first 300 chars of each retrieved chunk so you can verify relevance
+            logger.info("📝 [RAG] Context preview: %s...", doc_snippets[:300].replace("\n", " "))
     else:
-        logging.warning("⚠️ No RAG tools used — LLM answered from training data")
+        logger.warning(
+            "⚠️  [RAG] Vector DB was NOT queried — Gemini answered from training data! "
+            "Check the system prompt or tool binding."
+        )
 
     return result["messages"][-1].content

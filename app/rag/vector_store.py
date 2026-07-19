@@ -3,7 +3,9 @@ from langchain_chroma import Chroma
 from app.core.config import settings
 
 embeddings = GoogleGenerativeAIEmbeddings(
-    model="gemini-embedding-001", google_api_key=settings.GEMINI_API_KEY
+    model="gemini-embedding-001",
+    google_api_key=settings.GEMINI_API_KEY,
+    task_type="retrieval_query",
 )
 
 vectorstore = Chroma(

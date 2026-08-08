@@ -14,11 +14,11 @@ services:
     name: zentra-backend
     env: python
     plan: free
-    buildCommand: pip install uv && uv sync && python app/ml/download_models.py && python app/rag/download_chroma.py
+    buildCommand: apt-get install -y build-essential && pip install --upgrade pip setuptools wheel && pip install uv && uv sync && pip install "chromadb>=1.3.5" "langchain-chroma==1.1.0" && python app/ml/download_models.py && python app/rag/download_chroma.py
     startCommand: alembic upgrade head && uvicorn app.main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
-        value: "3.12"
+        value: "3.13.1"
       
       - key: DATABASE_URL
         fromDatabase:

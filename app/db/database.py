@@ -2,10 +2,17 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import declarative_base
 from app.core.config import settings #type: ignore
 
-# Convert PostgreSQL URL to async version (postgresql:// -> postgresql+psycopg://)
-DATABASE_URL = str(settings.DATABASE_URL).replace(
-    "postgresql://", "postgresql+psycopg://"
-)
+# Normalize DATABASE_URL to the psycopg async dialect.
+# Render provides postgres:// (without ql); also handle postgresql:// and already-prefixed URLs.
+_raw_db_url = str(settings.DATABASE_URL)
+if _raw_db_url.startswith("postgres://"):
+    DATABASE_URL = "postgresql+psycopg://" + _raw_db_url[len("postgres://"):]
+elif _raw_db_url.startswith("postgresql://"):
+    DATABASE_URL = "postgresql+psycopg://" + _raw_db_url[len("postgresql://"):]
+elif "+asyncpg://" in _raw_db_url:
+    DATABASE_URL = _raw_db_url.replace("+asyncpg://", "+psycopg://")
+else:
+    DATABASE_URL = _raw_db_url
 
 
 engine = create_async_engine(

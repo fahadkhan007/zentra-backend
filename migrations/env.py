@@ -21,9 +21,19 @@ from app.db import models  # This imports all models
 config = context.config
 
 # Set database URL - escape % for ConfigParser
-database_url = str(settings.DATABASE_URL).replace(
-    "postgresql://", "postgresql+psycopg://"
-).replace("%", "%%")  # Escape % for ConfigParser
+# Render can supply postgres://, postgresql://, or already-prefixed URLs.
+# Normalize all variants to the psycopg async dialect.
+_raw_url = str(settings.DATABASE_URL)
+# Replace any postgres:// or postgresql:// variant (sync, no driver) with psycopg
+if _raw_url.startswith("postgres://"):
+    _raw_url = "postgresql+psycopg://" + _raw_url[len("postgres://"):]
+elif _raw_url.startswith("postgresql://"):
+    _raw_url = "postgresql+psycopg://" + _raw_url[len("postgresql://"):]
+# If it already has a +driver suffix (e.g. +asyncpg), leave it or swap to psycopg
+elif "+asyncpg://" in _raw_url:
+    _raw_url = _raw_url.replace("+asyncpg://", "+psycopg://")
+
+database_url = _raw_url.replace("%", "%%")  # Escape % for ConfigParser
 
 config.set_main_option("sqlalchemy.url", database_url)
 # Interpret the config file for Python logging.

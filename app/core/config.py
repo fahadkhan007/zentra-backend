@@ -1,5 +1,4 @@
 from pydantic_settings import BaseSettings, SettingsConfigDict
-from pydantic import PostgresDsn
 
 
 class Settings(BaseSettings):
@@ -17,7 +16,8 @@ class Settings(BaseSettings):
     APP_PORT: int = 8000
 
 
-    DATABASE_URL: PostgresDsn
+    # Use str instead of PostgresDsn so Render's postgres:// URL is preserved as-is
+    DATABASE_URL: str
 
 
     REDIS_HOST: str = "localhost"
